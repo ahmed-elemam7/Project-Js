@@ -1,0 +1,291 @@
+:root {
+    --primary-color: #1464c8;
+    --info-color: #0e92b8;
+    --success-color: #28a745;
+    --error-color: #dc3545;
+    --light-bg: #f4f7fb;
+    --surface: #ffffff;
+    --dark-text: #111827;
+    --muted-text: #6b7280;
+    --border-color: #e6e9ef;
+    --secondary-bg: #f1f5f9;
+    --card-shadow: 0 6px 18px rgba(31, 41, 55, 0.04);
+    --correct-bg: #d4edda;
+    --correct-border: #28a745;
+    --correct-text: #155724;
+    --wrong-bg: #f8d7da;
+    --wrong-border: #dc3545;
+    --wrong-text: #721c24;
+}
+
+.dark-mode {
+    --primary-color: #7DD3FC;
+    --light-bg: #1f2937;
+    --surface: #374151;
+    --dark-text: #f3f4f6;
+    --muted-text: #9ca3af;
+    --border-color: #4b5563;
+    --secondary-bg: #4b5563;
+    --card-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
+    --correct-bg: #4ade80;
+    --correct-border: #4ade80;
+    --correct-text: #1f2937;
+    --wrong-bg: #f87171;
+    --wrong-border: #f87171;
+    --wrong-text: #1f2937;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 16px;
+    background-color: var(--light-bg);
+    color: var(--dark-text);
+    margin: 0 300px;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+    transition: background-color 0.15s ease-in-out;
+}
+
+h2,
+h3 {
+    color: var(--primary-color);
+    margin-bottom: 15px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border-color);
+    word-spacing: 0.1em;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+}
+
+.container {
+    width: 92%;
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 30px;
+    background: var(--surface);
+    border-radius: 12px;
+    box-shadow: var(--card-shadow);
+    min-height: 60vh;
+    box-sizing: border-box;
+    transition: background 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.container>*+* {
+    margin-top: 20px;
+}
+
+#qMeta,
+#timerText {
+    color: var(--muted-text);
+    font-weight: 700;
+    min-width: 60px;
+    text-align: right;
+    padding: 4px 8px;
+    border-radius: 6px;
+    background-color: var(--secondary-bg);
+}
+
+#timerWrapper {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+#timerBar {
+    height: 8px;
+    background-color: var(--success-color);
+    border-radius: 50px;
+    width: var(--bar-pct, 100%);
+    transition: width 1s linear;
+}
+
+#profile {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    background: var(--info-color);
+    color: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 25px;
+}
+
+#profilePic {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #fff;
+}
+
+#questionImg {
+    max-width: 200px;
+}
+
+form>div {
+    margin-bottom: 15px;
+}
+
+form input[type="text"],
+form input[type="password"],
+form input[type="number"],
+form select {
+    max-width: 450px;
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: 150ms ease-in-out;
+    box-sizing: border-box;
+    background: var(--surface);
+    color: var(--dark-text);
+}
+
+form input:focus {
+    border-color: var(--primary-color);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(20, 100, 200, 0.1);
+}
+
+button,
+.btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 14px;
+    transition: 150ms ease-in-out;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: fit-content;
+    min-width: 120px;
+}
+
+button[type="submit"],
+.btn-primary,
+#nextBtn {
+    background: var(--primary-color);
+    color: white;
+}
+
+.btn-secondary {
+    background: var(--secondary-bg);
+    color: var(--dark-text);
+    border: 1px solid var(--border-color);
+}
+
+.btn-full {
+    width: 100%;
+    max-width: 450px;
+}
+
+button:hover,
+.fileBtn:hover {
+    filter: brightness(0.9);
+    transform: translateY(-1px);
+}
+
+button:disabled {
+    background: #ccc !important;
+    cursor: not-allowed;
+    transform: none;
+    filter: none;
+}
+
+#choices {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin: 20px 0;
+}
+
+.choice-option {
+    padding: 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: var(--surface);
+    color: var(--dark-text);
+    cursor: pointer;
+    text-align: left;
+    transition: 150ms ease-in-out;
+}
+
+.choice-option.correct {
+    background: var(--correct-bg) !important;
+    border-color: var(--correct-border) !important;
+    color: var(--correct-text) !important;
+    opacity: 1 !important;
+}
+
+.choice-option.wrong {
+    background: var(--wrong-bg) !important;
+    border-color: var(--wrong-border) !important;
+    color: var(--wrong-text) !important;
+    opacity: 1 !important;
+}
+
+body.login-page,
+body.register-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+    margin: 0;
+}
+
+body.login-page .container,
+body.register-page .container {
+    max-width: 420px;
+    padding: 28px;
+}
+
+.login-page .container h2,
+.register-page .container h2 {
+    text-align: center;
+}
+
+body.login-page .container form input,
+body.login-page .container form select,
+body.register-page .container form input,
+body.register-page .container form select {
+    width: 100%;
+    margin-bottom: 12px;
+}
+
+@media (max-width: 768px) {
+    body {
+        margin: 0;
+    }
+
+    .container {
+        padding: 15px;
+        margin: 15px auto;
+    }
+
+    form input[type="text"],
+    form input[type="password"],
+    form input[type="number"],
+    form select,
+    .btn-full {
+        max-width: 100%;
+        width: 100%;
+        min-width: 0;
+    }
+
+    #createExamForm,
+    #questionForm,
+    #choices {
+        grid-template-columns: 1fr;
+        display: flex;
+        flex-direction: column;
+    }
+}

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <button id="modeToggle" style="margin-bottom: 20px; float: right;" class="btn btn-secondary">
+        Switch to Dark Mode
+    </button>
+    <h2>Teacher Dashboard</h2>
+
+    <div id="teacherInfo">
+        <p class="teacherName"><strong></strong></p>
+        <p class="course"></p>
+    </div>
+
+    <h3>Create Exam</h3>
+    <form id="createExamForm">
+        <input type="text" id="examName" placeholder="Exam Name" required>
+        <input type="number" id="examDuration" placeholder="Duration Minutes" required>
+        <input type="number" id="numQuestions" placeholder="Number of Questions" min="1" required>
+        <select id="examGrade" required>
+            <option value=""> Select Grade </option>
+            <option value="1">Grade 1</option>
+            <option value="2">Grade 2</option>
+            <option value="3">Grade 3</option>
+        </select>
+        <button style="margin-top: 10px;" type="submit">Create Exam</button>
+    </form>
+
+    <h3>All Exams</h3>
+    <ul id="examsList"></ul>
+    <script src="Classes.js" defer></script>
+    <script src="teachersData.js" defer></script>
+    <script src="teacherDashboard.js" defer></script>
+</body>
+
+</html>
