@@ -129,6 +129,8 @@ function handleChoice(btn, idx) {
     const q = questions[currentIndex];
     const correctIdx = q.correctAnswer;
 
+    q.studentAnswer = q.choices[idx];
+
     const btns = choicesDiv.querySelectorAll('button');
     btns.forEach((b, i) => {
         b.disabled = true;
@@ -161,18 +163,31 @@ function finishExam() {
     document.getElementById('resultContainer').style.display = 'block';
     document.getElementById('score').textContent = `Score: ${totalScore}`;
 
+    const questionsForReview = questions.map(q => {
+        return {
+            text: q.text,
+            choices: q.choices,
+            correctAnswer: q.choices[q.correctAnswer],
+            studentAnswer: q.studentAnswer || 'N/A',
+            score: q.score,
+            difficulty: q.difficulty
+        };
+    });
+
     const date = new Date().toLocaleString();
     const examResult = {
         examId: exam.id,
         examName: exam.name,
         score: totalScore,
-        course:exam.course,
-        date
+        course: exam.course,
+        date,
+        questions: questionsForReview
     };
+
     student.completedExams = student.completedExams || [];
     student.completedExams.push(examResult);
     if (student.nextExams) student.nextExams = student.nextExams.filter(id => id !== exam.id);
-    StorageService.updateStudent(student);
+    StorageService.save('students', StorageService.load('students').map(s => s.id === student.id ? student : s));
     StorageService.save('currentUser', student);
 
     exam.results = exam.results || [];

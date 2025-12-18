@@ -1,6 +1,4 @@
 
-setupDarkModeToggle();
-
 const storedUser = StorageService.load("currentUser");
 if (!storedUser) window.location.href = "login.html";
 const teacher = Object.assign(new Teacher(), storedUser);
