@@ -1,10 +1,9 @@
-
 const storedUser = StorageService.load("currentUser");
-if (!storedUser) window.location.href = "login.html";
+if (!storedUser) window.location.href = "../pages/login.html";
 const teacher = Object.assign(new Teacher(), storedUser);
 
 const examId = StorageService.load("currentExamId");
-if (!examId) window.location.href = "teacherDashboard.html";
+if (!examId) window.location.href = "../pages/teacherDashboard.html";
 
 const exams = StorageService.load("exams").map(e => Object.assign(new Exam(), e));
 const exam = exams.find(e => e.id == examId);
@@ -166,5 +165,5 @@ document.getElementById('assignSingleBtn').addEventListener('click', () => {
 });
 
 document.getElementById('backBtn').addEventListener('click', () => {
-    window.location.href = 'teacherDashboard.html';
+    window.location.href = '../pages/teacherDashboard.html';
 });

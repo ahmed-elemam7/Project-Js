@@ -1,16 +1,16 @@
 const storedUser = JSON.parse(localStorage.getItem("currentUser"));
-if (!storedUser) window.location.href = "login.html";
+if (!storedUser) window.location.href = "../pages/login.html";
 const student = Object.assign(new Student(), storedUser);
 
 const examId = localStorage.getItem("currentExamId");
-if (!examId) window.location.href = "studentProfile.html";
+if (!examId) window.location.href = "../pages/studentProfile.html";
 
 const exams = StorageService.load("exams").map(e => Object.assign(new Exam(), e));
 const exam = exams.find(e => e.id == examId);
 
 if (!exam) {
     alert('Exam not found');
-    window.location.href = 'studentProfile.html';
+    window.location.href = '../pages/studentProfile.html';
 }
 
 if (exam.questions && exam.questions.length) {
@@ -19,7 +19,7 @@ if (exam.questions && exam.questions.length) {
 
 if (student.hasTakenExam(exam.id, exam.version)) {
     alert("You already took this exam!");
-    window.location.href = "studentProfile.html";
+    window.location.href = "../pages/studentProfile.html";
 }
 
 document.getElementById("examName").textContent = `${exam.name} (${exam.numberOfQuestions} required, ${exam.questions.length} added)`;
@@ -30,7 +30,7 @@ try {
 } catch (err) {
     console.error('Error getting randomized questions', err, exam.questions);
     alert('Error loading exam questions. Please contact the teacher.');
-    window.location.href = 'studentProfile.html';
+    window.location.href = '../pages/studentProfile.html';
 }
 
 let currentIndex = 0;

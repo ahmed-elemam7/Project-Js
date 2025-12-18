@@ -1,5 +1,5 @@
 const storedUser = StorageService.load("currentUser");
-if (!storedUser) window.location.href = "login.html";
+if (!storedUser) window.location.href = "../pages/login.html";
 const teacher = Object.assign(new Teacher(), storedUser);
 
 document.getElementsByClassName("teacherName")[0].innerText = teacher.name
@@ -59,7 +59,7 @@ document.getElementById("createExamForm").addEventListener("submit", function (e
 
     localStorage.setItem("currentExamId", exam.id);
 
-    window.location.href = "TeacherExamDetails.html";
+    window.location.href = "../pages/TeacherExamDetails.html";
 });
 
 const allExams = StorageService.load('exams');

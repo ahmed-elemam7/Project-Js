@@ -11,14 +11,14 @@ document.getElementById('loginForm').addEventListener('submit', function (e) {
         const student = students.find(s => s.username === username && s.password === password);
         if (student) {
             StorageService.save("currentUser", student);
-            window.location.href = "studentProfile.html";
+            window.location.href = "../pages/studentProfile.html";
         } else errorElement.textContent = "Invalid credentials!";
     } else {
         const teachers = StorageService.load("teachers")
         const teacher = teachers.find(t => t.username === username && t.password === password);
         if (teacher) {
             StorageService.save("currentUser", teacher);
-            window.location.href = "teacherDashboard.html";
+            window.location.href = "../pages/teacherDashboard.html";
         } else errorElement.textContent = "Invalid credentials!"
     }
 });

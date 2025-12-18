@@ -35,7 +35,7 @@ document.getElementById('registerForm').addEventListener('submit', function (e) 
         errorElement.style.color = 'green';
         errorElement.textContent = "Registered successfully!";
         setTimeout(() => {
-            window.location.href = "login.html";
+            window.location.href = "../pages/login.html";
         }, 2000);
     };
     createStudent();

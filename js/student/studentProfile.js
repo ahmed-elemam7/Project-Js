@@ -1,11 +1,11 @@
 const storedUser = StorageService.load("currentUser");
-if (!storedUser) window.location.href = "login.html";
+if (!storedUser) window.location.href = "../pages/login.html";
 const student = Object.assign(new Student(), storedUser);
 const img = document.getElementById("profilePic");
 img.onerror = () => {
     img.src = "images/avatar.png";
 };
-img.src = student.profilePic || "images/avatar.png";
+img.src = student.profilePic || "../assets/images/avatar.png";
 document.getElementById("username").textContent = student.username;
 document.getElementById("grade").textContent = "Grade: " + student.grade;
 
@@ -47,7 +47,7 @@ student.nextExams.forEach(exId => {
                 return;
             }
             localStorage.setItem('currentExamId', exam.id);
-            window.location.href = 'quiz.html';
+            window.location.href = '../pages/quiz.html';
         });
 
         li.appendChild(startBtn);
