@@ -2,9 +2,9 @@ document.getElementById('loginForm').addEventListener('submit', function (e) {
     e.preventDefault();
     const errorElement = document.getElementById('errorMessage');
     errorElement.textContent = '';
-    const username = document.getElementById('username').value;
-    const password = document.getElementById('password').value;
-    const role = document.getElementById('role').value;
+    const username = document.getElementById('username').value.trim();
+    const password = document.getElementById('password').value.trim();
+    const role = document.getElementById('role').value.trim();
 
     if (role === "student") {
         const students = StorageService.load("students")

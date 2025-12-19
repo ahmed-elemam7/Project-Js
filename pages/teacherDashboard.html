@@ -5,7 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Teacher Dashboard</title>
-<link rel="stylesheet" href="../assets/css/style.css"></head>
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
 
 <body>
     <button id="modeToggle" style="margin-bottom: 20px; float: right;" class="btn btn-secondary">
@@ -37,7 +38,9 @@
     <div id="resultsDiv" style=" padding:10px"></div>
     <h3>Review Student Answers</h3>
     <label for="studentSelectForReview">Select Student:</label>
-    <select id="studentSelectForReview"></select>
+    <select id="studentSelectForReview">
+        <option value="" selected>Select a student...</option>
+    </select>
     <div id="reviewDiv"></div>
 
     <script src="../js/core/theme.js" defer></script>

@@ -1,10 +1,13 @@
 const storedUser = StorageService.load("currentUser");
 if (!storedUser) window.location.href = "../pages/login.html";
+
 const student = Object.assign(new Student(), storedUser);
 const img = document.getElementById("profilePic");
+
 img.onerror = () => {
     img.src = "../assets/images/avatar.png";
 };
+
 img.src = student.profilePic || "../assets/images/avatar.png";
 document.getElementById("username").textContent = student.username;
 document.getElementById("grade").textContent = "Grade: " + student.grade;
@@ -18,18 +21,20 @@ student.completedExams.forEach(ex => {
 
 const nextList = document.getElementById("nextExams");
 const exams = StorageService.load("exams").map(e => Object.assign(new Exam(), e));
+
 student.nextExams.forEach(exId => {
     const exam = exams.find(e => e.id === exId);
     if (exam) {
         const li = document.createElement("li");
-        li.textContent = `${exam.name} - Duration: ${exam.durationMinutes} mins`;
+        li.textContent = ` Course: ${exam.course} - Exam: ${exam.name} - Duration: ${exam.durationMinutes} mins`;
 
         const startBtn = document.createElement('button');
+        startBtn.style.height = "12px";
         startBtn.textContent = 'Start Exam';
         startBtn.style.marginLeft = '10px';
-        const isTaken = student.hasTakenExam(exam.id, exam.version);
+        const isTaken = student.hasTakenExam(exam.id);
         const isAssigned = exam.assignedStudents ? exam.assignedStudents.includes(student.id) : false;
-        const ready = exam.questions && exam.questions.length >= exam.numberOfQuestions;
+        const ready = exam.questions.length >= exam.numberOfQuestions;
         if (isTaken) {
             startBtn.disabled = true;
             startBtn.textContent = 'Already Taken';

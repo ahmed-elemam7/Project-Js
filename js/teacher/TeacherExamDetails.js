@@ -1,5 +1,6 @@
 const storedUser = StorageService.load("currentUser");
 if (!storedUser) window.location.href = "../pages/login.html";
+
 const teacher = Object.assign(new Teacher(), storedUser);
 
 const examId = StorageService.load("currentExamId");
@@ -16,9 +17,14 @@ function renderQuestions() {
     questionsList.innerHTML = "";
     exam.questions.forEach((q, idx) => {
         const li = document.createElement("li");
+        li.style.border = "1px solid grey";
+        li.style.margin = "8px";
+        li.style.padding = "8px";
+        li.style.borderRadius = "15px";
+        li.style.textAlign = "center";
 
         const questionText = document.createElement("div");
-        questionText.textContent = `${idx + 1}. ${q.text} [Score: ${q.score}]`;
+        questionText.textContent = `${idx + 1}. ${q.text}  [Score: ${q.score}] [${q.difficulty}]`;
         li.appendChild(questionText);
 
         if (q.image) {
@@ -53,6 +59,7 @@ function renderQuestions() {
             document.getElementById('choice2').value = q.choices[1] || '';
             document.getElementById('choice3').value = q.choices[2] || '';
             document.getElementById('choice4').value = q.choices[3] || '';
+            document.getElementById('qImage').value = q.image || '';
             document.getElementById('correctChoice').value = q.correctAnswer;
             document.getElementById('difficulty').value = q.difficulty;
             document.getElementById('score').value = q.score;
@@ -61,6 +68,7 @@ function renderQuestions() {
             StorageService.updateExam(exam);
             renderQuestions();
         });
+
         li.appendChild(editBtn);
 
         questionsList.appendChild(li);
@@ -86,9 +94,9 @@ document.getElementById("questionForm").addEventListener("submit", function (e) 
         document.getElementById("choice3").value,
         document.getElementById("choice4").value
     ];
-    const correct = parseInt(document.getElementById("correctChoice").value);
+    const correct = +(document.getElementById("correctChoice").value);
     const difficulty = document.getElementById("difficulty").value;
-    const score = parseInt(document.getElementById("score").value);
+    const score = +(document.getElementById("score").value);
 
     const saveQuestion = () => {
         const questionData = new Question(id, text, imgSrc, choices, correct, difficulty, score);
@@ -103,7 +111,31 @@ document.getElementById("questionForm").addEventListener("submit", function (e) 
 function calculateTotalScore() {
     return exam.questions.reduce((s, q) => s + (q.score || 0), 0);
 }
+
+function checkDifficultyDistribution() {
+    const counts = { Easy: 0, Middle: 0, Hard: 0 };
+    exam.questions.forEach(q => {
+        if (counts[q.difficulty] !== undefined) counts[q.difficulty]++;
+    });
+
+    if (counts.Easy === 0 || counts.Middle === 0 || counts.Hard === 0) {
+        alert("Exam must include Easy, Middle, and Hard questions.");
+        return false;
+    }
+    return true;
+}
+
+function checkQuestionsCount() {
+    if (exam.questions.length < exam.numberOfQuestions) {
+        alert(`Exam must have at least ${exam.numberOfQuestions} questions. Currently has ${exam.questions.length}.`);
+        return false;
+    }
+    return true;
+}
+
 document.getElementById('finalizeBtn').addEventListener('click', () => {
+    if (!checkQuestionsCount()) return;
+    if (!checkDifficultyDistribution()) return;
     const total = calculateTotalScore();
     if (total !== 100) {
         alert('Total questions score must sum to 100. Current total: ' + total);
@@ -114,6 +146,8 @@ document.getElementById('finalizeBtn').addEventListener('click', () => {
 });
 
 document.getElementById('assignBtn').addEventListener('click', () => {
+    if (!checkQuestionsCount()) return;
+    if (!checkDifficultyDistribution()) return;
     const total = calculateTotalScore();
     if (total !== 100) {
         alert('Total questions score must sum to 100. Current total: ' + total);
@@ -144,12 +178,14 @@ students.forEach(st => {
 });
 
 document.getElementById('assignSingleBtn').addEventListener('click', () => {
+    if (!checkQuestionsCount()) return;
+    if (!checkDifficultyDistribution()) return;
     const total = calculateTotalScore();
     if (total !== 100) {
         alert('Total questions score must sum to 100. Current total: ' + total);
         return;
     }
-    const selectedId = parseInt(studentSelect.value);
+    const selectedId = +(studentSelect.value);
     const student = students.find(st => st.id === selectedId);
     if (!student) {
         alert('Student not found!');

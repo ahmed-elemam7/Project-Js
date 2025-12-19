@@ -1,8 +1,8 @@
-const storedUser = JSON.parse(localStorage.getItem("currentUser"));
+const storedUser = StorageService.load("currentUser");
 if (!storedUser) window.location.href = "../pages/login.html";
 const student = Object.assign(new Student(), storedUser);
 
-const examId = localStorage.getItem("currentExamId");
+const examId = StorageService.load("currentExamId");
 if (!examId) window.location.href = "../pages/studentProfile.html";
 
 const exams = StorageService.load("exams").map(e => Object.assign(new Exam(), e));
@@ -13,18 +13,19 @@ if (!exam) {
     window.location.href = '../pages/studentProfile.html';
 }
 
-if (exam.questions && exam.questions.length) {
+if (exam.questions.length) {
     exam.questions = exam.questions.map(q => Object.assign(new Question(), q));
 }
 
-if (student.hasTakenExam(exam.id, exam.version)) {
+if (student.hasTakenExam(exam.id)) {
     alert("You already took this exam!");
     window.location.href = "../pages/studentProfile.html";
 }
 
-document.getElementById("examName").textContent = `${exam.name} (${exam.numberOfQuestions} required, ${exam.questions.length} added)`;
+document.getElementById("examName").textContent = `${exam.name} (${exam.numberOfQuestions} required questions)`;
 
 let questions = [];
+
 try {
     questions = exam.getRandomizedQuestions();
 } catch (err) {
@@ -37,7 +38,7 @@ let currentIndex = 0;
 let totalScore = 0;
 const totalQuestions = questions.length;
 
-const totalSeconds = Math.max(1, (exam.durationMinutes || 1) * 60);
+const totalSeconds = Math.max(1, (exam.durationMinutes) * 60);
 const perQuestionSec = Math.floor(totalSeconds / Math.max(1, totalQuestions));
 let remaining = perQuestionSec;
 let timerInterval = null;
@@ -93,9 +94,7 @@ function renderCurrent() {
     else { questionImg.style.display = 'none'; }
 
     choicesDiv.innerHTML = '';
-    if (!Array.isArray(q.choices)) q.choices = q.choices ? Object.values(q.choices) : [];
     while (q.choices.length < 4) q.choices.push('(missing)');
-    if (typeof q.correctAnswer !== 'number') q.correctAnswer = 0;
 
     q.choices.forEach((ch, i) => {
         const btn = document.createElement('button');
@@ -108,8 +107,7 @@ function renderCurrent() {
 
     nextBtn.disabled = true;
     startTimer();
-    qMeta.textContent = `Question ${currentIndex + 1} of ${totalQuestions} 
-    — Defficulty: ${q.difficulty} — Score: ${q.score}`;
+    qMeta.textContent = `Question ${currentIndex + 1} of ${totalQuestions} — Difficulty: ${q.difficulty} — Score: ${q.score}`;
 }
 
 function disableChoices() {
@@ -143,7 +141,7 @@ function handleChoice(btn, idx) {
     nextBtn.disabled = false;
 }
 
-function nextQuestion(manual = true) {
+function nextQuestion() {
     if (currentIndex < totalQuestions - 1) {
         currentIndex++;
         renderCurrent();
@@ -172,23 +170,13 @@ function finishExam() {
     });
 
     const date = new Date().toLocaleString();
-    const examResult = {
-        examId: exam.id,
-        examName: exam.name,
-        score: totalScore,
-        course: exam.course,
-        date,
-        questions: questionsForReview
-    };
-
     student.completedExams = student.completedExams || [];
-    student.completedExams.push(examResult);
+    student.completedExams.push({ examId: exam.id, examName: exam.name, score: totalScore, course: exam.course, date, questions: questionsForReview });
     if (student.nextExams) student.nextExams = student.nextExams.filter(id => id !== exam.id);
     StorageService.save('students', StorageService.load('students').map(s => s.id === student.id ? student : s));
     StorageService.save('currentUser', student);
 
-    exam.results = exam.results || [];
-    exam.results.push({ studentId: student.id, score: totalScore, date });
+    exam.addResult(student.id, totalScore, date);
     StorageService.updateExam(exam);
 
     nextBtn.disabled = true;

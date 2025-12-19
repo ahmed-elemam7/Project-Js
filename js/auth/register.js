@@ -2,14 +2,14 @@ document.getElementById('registerForm').addEventListener('submit', function (e) 
     e.preventDefault();
 
     const errorElement = document.getElementById('errorMessage');
-    errorElement.textContent = ''; 
+    errorElement.textContent = '';
 
     const id = Date.now();
     const username = document.getElementById('username').value.trim();
     const password = document.getElementById('password').value.trim();
-    const grade = parseInt(document.getElementById('grade').value.trim());
+    const grade = +(document.getElementById('grade').value.trim());
     const mobile = document.getElementById('mobile').value.trim();
-    const profilePic= document.getElementById('profilePicInput').value.trim();
+    const profilePic = document.getElementById('profilePicInput').value.trim();
     const students = StorageService.load("students") || [];
 
     if (students.find(s => s.username === username)) {
