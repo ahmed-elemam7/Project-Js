@@ -55,7 +55,7 @@ document.getElementById("createExamForm").addEventListener("submit", e => {
     const numQ = +document.getElementById("numQuestions").value.trim();
     const grade = +document.getElementById("examGrade").value.trim();
 
-    if (isNaN(numQ) || numQ < 1) {
+    if (isNaN(numQ) || numQ < 15) {
         alert("Number of questions must be at least 15.");
         return;
     }
