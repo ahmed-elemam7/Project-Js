@@ -39,7 +39,7 @@ A light-weight client-side Quiz Management application built with plain HTML, CS
 
 Because this is a static client-side site, you can serve the folder using any static server. Examples:
 
-- VS Code: Install and use the Live Server extension, then open any page (e.g., `pages/login.html`).
+- VS Code: Install and use the Live Server extension, then open  page (`pages/login.html`).
 
 ---
 
@@ -52,10 +52,4 @@ Because this is a static client-side site, you can serve the folder using any st
 
 ---
 
-## 💡 Tips for development
-
-- Use the browser DevTools Console to inspect `localStorage` keys like `students`, `exams`, and `currentUser`.
-- To add seed/test data, create objects directly in the Console using the same models found in `js/core/Classes.js`.
-
----
 
