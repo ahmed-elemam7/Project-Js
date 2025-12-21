@@ -1,3 +1,6 @@
+
+# Name:Ahmed Ibrahim Elemam --- Email:ahmed.ibrahim.elemam@gmail.com   
+
 # Project JS (Quiz Platform)
 
 A light-weight client-side Quiz Management application built with plain HTML, CSS and JavaScript. It supports teacher and student roles, exam creation and review, student profiles and quiz taking. Data is stored in the browser (localStorage) via a small StorageService abstraction.
