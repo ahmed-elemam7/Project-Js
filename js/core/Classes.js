@@ -36,9 +36,6 @@ class Teacher {
     createExam(exam) {
         this.exams.push(exam);
     }
-    assignStudentToExam(exam, studentId) {
-        exam.assignStudent(studentId);
-    }
 }
 
 class Question {
