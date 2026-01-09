@@ -9,9 +9,7 @@
 </head>
 
 <body>
-    <button id="modeToggle" style="margin-bottom: 17px; float: right;" class="btn btn-secondary">
-        Switch to Dark Mode
-    </button>
+    <button id="modeToggle" style="margin-bottom: 17px; float: right;" class="btn btn-secondary">Switch to Dark Mode</button>
     <h2 id="examTitle"></h2>
     <h3>Add Question</h3>
     <form id="questionForm">
@@ -19,7 +17,6 @@
             <label for="qText">Question Text:</label>
             <input type="text" id="qText" placeholder="Enter question" required>
         </div>
-
         <div>
             <label>Question Image:</label>
             <input type="text" id="qImage" placeholder="Enter Image URL">
@@ -40,7 +37,6 @@
             <label for="choice4">Choice 4:</label>
             <input type="text" id="choice4" placeholder="Choice 4" required>
         </div>
-
         <div>
             <label for="correctChoice">Correct Choice:</label>
             <select id="correctChoice">
@@ -50,7 +46,6 @@
                 <option value="3">Choice 4</option>
             </select>
         </div>
-
         <div>
             <label for="difficulty">Difficulty:</label>
             <select id="difficulty">
@@ -59,30 +54,30 @@
                 <option value="Hard">Hard</option>
             </select>
         </div>
-
         <div>
             <label for="score">Score:</label>
             <input type="number" id="score" placeholder="Score" min="0" max="100" required>
         </div>
-
         <button type="submit">Add Question</button>
     </form>
 
     <h3>All Questions</h3>
     <ul id="questionsList"></ul>
 
-    <div style="text-align:center;">
+    <div style="text-align:center; margin-top:20px;">
         <button id="finalizeBtn">Finalize Exam (validate total = 100)</button>
-        <button id="assignBtn">Assign All Students</button>
-        <label for="studentSelect">Assign to Student:</label>
-        <select id="studentSelect"> </select>
-        <button id="assignSingleBtn">Assign</button>
-        <button style="margin-top:10px ;" id="backBtn">Back to Dashboard</button>
+        <div id="studentSelectContainer" style="margin-top:20px;justify-content:center; align-items:center;">
+            <label>Assign to Student:</label>
+            <div id="studentSelect" style="display:flex; flex-wrap:wrap; gap:10px;justify-content:center; align-items:center;"></div>
+        </div>
+        <button id="assignSingleBtn">Assign Selected Students</button>
+        <button style="margin-top:10px;" id="assignBtn">Assign to All Students</button>
+        <button style="margin-top:10px;" id="backBtn">Back to Dashboard</button>
     </div>
+
     <script src="../js/core/theme.js" defer></script>
     <script src="../js/core/Classes.js" defer></script>
     <script src="../js/teacher/TeacherExamDetails.js" defer></script>
-
 </body>
 
 </html>

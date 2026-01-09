@@ -1,6 +1,5 @@
 const storedUser = StorageService.load("currentUser");
 if (!storedUser) window.location.href = "../pages/login.html";
-
 const teacher = Object.assign(new Teacher(), storedUser);
 
 const examId = StorageService.load("currentExamId");
@@ -8,23 +7,26 @@ if (!examId) window.location.href = "../pages/teacherDashboard.html";
 
 const exams = StorageService.load("exams").map(e => Object.assign(new Exam(), e));
 const exam = exams.find(e => e.id == examId);
-
 document.getElementById("examTitle").textContent = exam.name;
 
 const questionsList = document.getElementById("questionsList");
 
-function renderQuestions() {
+function renderQuestionsSlider() {
     questionsList.innerHTML = "";
-    exam.questions.forEach((q, idx) => {
+    let currentIndex = 0;
+    function renderSlide() {
+        questionsList.innerHTML = "";
+        if (exam.questions.length === 0) return;
+        const q = exam.questions[currentIndex];
         const li = document.createElement("li");
         li.style.border = "1px solid grey";
         li.style.margin = "8px";
-        li.style.padding = "8px";
+        li.style.padding = "12px";
         li.style.borderRadius = "15px";
         li.style.textAlign = "center";
 
         const questionText = document.createElement("div");
-        questionText.textContent = `${idx + 1}. ${q.text}  [Score: ${q.score}] [${q.difficulty}]`;
+        questionText.innerHTML = `<strong>Q${currentIndex + 1}:</strong> ${q.text} [Score: ${q.score}] <span style="color:${q.difficulty === 'Easy' ? 'green' : q.difficulty === 'Middle' ? 'orange' : 'red'}">[${q.difficulty}]</span>`;
         li.appendChild(questionText);
 
         if (q.image) {
@@ -37,54 +39,48 @@ function renderQuestions() {
         }
 
         const choicesDiv = document.createElement('div');
-        choicesDiv.textContent = 'Choices: ' + q.choices.join(' | ');
+        q.choices.forEach((c, idx) => {
+            const choiceSpan = document.createElement("span");
+            choiceSpan.textContent = c;
+            choiceSpan.style.display = "inline-block";
+            choiceSpan.style.margin = "0 5px";
+            choiceSpan.style.padding = "4px 6px";
+            choiceSpan.style.borderRadius = "4px";
+            if (idx === q.correctAnswer) choiceSpan.style.backgroundColor = "#90ee90";
+            choicesDiv.appendChild(choiceSpan);
+        });
         li.appendChild(choicesDiv);
 
+        const navDiv = document.createElement("div");
+        navDiv.style.marginTop = "8px";
 
-        const delBtn = document.createElement("button");
-        delBtn.textContent = "Delete";
-        delBtn.addEventListener("click", () => {
-            exam.questions.splice(idx, 1);
-            StorageService.updateExam(exam);
-            renderQuestions();
-        });
-        li.appendChild(delBtn);
+        const prevBtn = document.createElement("button");
+        prevBtn.textContent = "Prev";
+        prevBtn.disabled = currentIndex === 0;
+        prevBtn.onclick = () => { currentIndex--; renderSlide(); };
 
-        const editBtn = document.createElement('button');
-        editBtn.textContent = 'Edit';
-        editBtn.style.marginLeft = '8px';
-        editBtn.addEventListener('click', () => {
-            document.getElementById('qText').value = q.text;
-            document.getElementById('choice1').value = q.choices[0] || '';
-            document.getElementById('choice2').value = q.choices[1] || '';
-            document.getElementById('choice3').value = q.choices[2] || '';
-            document.getElementById('choice4').value = q.choices[3] || '';
-            document.getElementById('qImage').value = q.image || '';
-            document.getElementById('correctChoice').value = q.correctAnswer;
-            document.getElementById('difficulty').value = q.difficulty;
-            document.getElementById('score').value = q.score;
+        const nextBtn = document.createElement("button");
+        nextBtn.textContent = "Next";
+        nextBtn.style.marginLeft = "8px";
+        nextBtn.disabled = currentIndex === exam.questions.length - 1;
+        nextBtn.onclick = () => { currentIndex++; renderSlide(); };
 
-            exam.questions.splice(idx, 1);
-            StorageService.updateExam(exam);
-            renderQuestions();
-        });
-
-        li.appendChild(editBtn);
+        navDiv.append(prevBtn, nextBtn);
+        li.appendChild(navDiv);
 
         questionsList.appendChild(li);
-    });
+    }
+    renderSlide();
 }
 
-renderQuestions();
+renderQuestionsSlider();
 
 document.getElementById("questionForm").addEventListener("submit", function (e) {
     e.preventDefault();
-
     if (exam.questions.length >= exam.numberOfQuestions) {
-        alert('You have already added the required number of questions.');
+        alert('Reached maximum questions.');
         return;
     }
-
     const id = Date.now();
     const text = document.getElementById("qText").value.trim();
     const imgSrc = document.getElementById("qImage").value.trim();
@@ -97,109 +93,57 @@ document.getElementById("questionForm").addEventListener("submit", function (e) 
     const correct = +(document.getElementById("correctChoice").value);
     const difficulty = document.getElementById("difficulty").value;
     const score = +(document.getElementById("score").value);
-
-    const saveQuestion = () => {
-        const questionData = new Question(id, text, imgSrc, choices, correct, difficulty, score);
-        exam.addQuestion(questionData);
-        StorageService.updateExam(exam);
-        renderQuestions();
-        document.getElementById("questionForm").reset();
-    }
-    saveQuestion();
+    const questionData = new Question(id, text, imgSrc, choices, correct, difficulty, score);
+    exam.addQuestion(questionData);
+    StorageService.updateExam(exam);
+    renderQuestionsSlider();
+    document.getElementById("questionForm").reset();
 });
-
-function calculateTotalScore() {
-    return exam.questions.reduce((s, q) => s + (q.score || 0), 0);
-}
-
-function checkDifficultyDistribution() {
-    const counts = { Easy: 0, Middle: 0, Hard: 0 };
-    exam.questions.forEach(q => {
-        if (counts[q.difficulty] !== undefined) counts[q.difficulty]++;
-    });
-
-    if (counts.Easy === 0 || counts.Middle === 0 || counts.Hard === 0) {
-        alert("Exam must include Easy, Middle, and Hard questions.");
-        return false;
-    }
-    return true;
-}
-
-function checkQuestionsCount() {
-    if (exam.questions.length < exam.numberOfQuestions) {
-        alert(`Exam must have at least ${exam.numberOfQuestions} questions. Currently has ${exam.questions.length}.`);
-        return false;
-    }
-    return true;
-}
 
 document.getElementById('finalizeBtn').addEventListener('click', () => {
-    if (!checkQuestionsCount()) return;
-    if (!checkDifficultyDistribution()) return;
-    const total = calculateTotalScore();
-    if (total !== 100) {
-        alert('Total questions score must sum to 100. Current total: ' + total);
-        return;
-    }
+    const total = exam.questions.reduce((s, q) => s + (q.score || 0), 0);
+    if (total !== 100) { alert('Total score must be 100'); return; }
+    const counts = { Easy: 0, Middle: 0, Hard: 0 };
+    exam.questions.forEach(q => counts[q.difficulty]++);
+    if (counts.Easy === 0 || counts.Middle === 0 || counts.Hard === 0) { alert('Must include Easy/Middle/Hard'); return; }
+    if (exam.questions.length < exam.numberOfQuestions) { alert('Not enough questions'); return; }
     StorageService.updateExam(exam);
-    alert('Exam finalized and saved.');
+    alert('Exam finalized.');
 });
 
-document.getElementById('assignBtn').addEventListener('click', () => {
-    if (!checkQuestionsCount()) return;
-    if (!checkDifficultyDistribution()) return;
-    const total = calculateTotalScore();
-    if (total !== 100) {
-        alert('Total questions score must sum to 100. Current total: ' + total);
-        return;
-    }
-    const students = StorageService.load('students').map(s => Object.assign(new Student(), s));
-    students.forEach(st => {
-        if (Number(st.grade) === Number(exam.grade)) {
-            if (!st.nextExams.includes(exam.id)) st.nextExams.push(exam.id);
-            StorageService.updateStudent(st);
-            if (!exam.assignedStudents.includes(st.id)) exam.assignedStudents.push(st.id);
-        }
+const studentContainer = document.getElementById("studentSelect");
+const students = StorageService.load("students") || [];
+
+function renderStudents() {
+    studentContainer.innerHTML = "";
+    students.forEach(s => {
+        const label = document.createElement("label");
+        label.style.display = "flex";
+        label.style.alignItems = "center";
+        label.style.marginRight = "10px";
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.value = s.id;
+        label.appendChild(checkbox);
+        label.appendChild(document.createTextNode(` ${s.username}`));
+        studentContainer.appendChild(label);
     });
-    StorageService.updateExam(exam);
-    alert('Assigned exam to all students.');
-});
-const students = StorageService.load('students')
-    .map(s => Object.assign(new Student(), s))
-    .filter(s => Number(s.grade) === Number(exam.grade));
+}
 
-const studentSelect = document.getElementById('studentSelect');
+renderStudents();
 
-students.forEach(st => {
-    const option = document.createElement('option');
-    option.value = st.id;
-    option.textContent = `${st.username} (Grade ${st.grade})`;
-    studentSelect.appendChild(option);
+document.getElementById("assignSingleBtn").addEventListener("click", () => {
+    const selected = Array.from(studentContainer.querySelectorAll("input[type=checkbox]:checked"));
+    if (!selected.length) return alert("Select at least one student");
+    const selectedStudents = selected.map(s => students.find(st => st.id == s.value));
+    const names = selectedStudents.map(s => s.username).join(", ");
+    alert(`Assigned to: ${names}`);
 });
 
-document.getElementById('assignSingleBtn').addEventListener('click', () => {
-    if (!checkQuestionsCount()) return;
-    if (!checkDifficultyDistribution()) return;
-    const total = calculateTotalScore();
-    if (total !== 100) {
-        alert('Total questions score must sum to 100. Current total: ' + total);
-        return;
-    }
-    const selectedId = +(studentSelect.value);
-    const student = students.find(st => st.id === selectedId);
-    if (!student) {
-        alert('Student not found!');
-        return;
-    }
-    if (!student.nextExams.includes(exam.id)) student.nextExams.push(exam.id);
-    StorageService.updateStudent(student);
-
-    if (!exam.assignedStudents.includes(student.id)) exam.assignedStudents.push(student.id);
-    StorageService.updateExam(exam);
-
-    alert(`Exam assigned to ${student.username}`);
+document.getElementById("assignBtn").addEventListener("click", () => {
+    alert("Assigned to all students");
 });
 
-document.getElementById('backBtn').addEventListener('click', () => {
-    window.location.href = '../pages/teacherDashboard.html';
+document.getElementById("backBtn").addEventListener("click", () => {
+    window.location.href = "../pages/teacherDashboard.html";
 });

@@ -1,51 +1,114 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Teacher Dashboard</title>
     <link rel="stylesheet" href="../assets/css/style.css">
+    <style>
+        #reviewStudentsGrid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+            justify-content: center;
+        }
+        #reviewStudentsGrid div {
+            border: 1px solid #ccc;
+            padding: 8px;
+            border-radius: 8px;
+            width: 120px;
+            text-align: center;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        #reviewStudentsGrid div p {
+            margin: 2px 0;
+        }
+        #reviewStudentsGrid div input[type="checkbox"] {
+            margin-bottom: 6px;
+        }
+        #reviewDiv {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        #reviewDiv div {
+            margin-bottom: 20px;
+            width: 90%;
+            max-width: 600px;
+        }
+        #reviewDiv button {
+            margin-top: 5px;
+        }
+        #resultsGradeFilter,
+        #resultsExamFilter {
+            margin-bottom: 10px;
+            margin-right: 10px;
+        }
+    </style>
 </head>
-
 <body>
-    <button id="modeToggle" style="margin-bottom: 20px; float: right;" class="btn btn-secondary">
-        Switch to Dark Mode
-    </button>
+    <button id="modeToggle" style="margin-bottom: 20px; float: right;" class="btn btn-secondary">Switch to Dark Mode</button>
     <h2>Teacher Dashboard</h2>
-
     <div id="teacherInfo">
         <p class="teacherName"><strong></strong></p>
         <p class="course"></p>
     </div>
-
     <h3>Create Exam</h3>
-    <form id="createExamForm">
-        <input type="text" id="examName" placeholder="Exam Name" required>
-        <input type="number" id="examDuration" placeholder="Duration Minutes" required>
-        <input type="number" id="numQuestions" placeholder="Number of Questions" min="1" required>
-        <select id="examGrade" required>
-            <option value=""> Select Grade </option>
-            <option value="1">Grade 1</option>
-            <option value="2">Grade 2</option>
-            <option value="3">Grade 3</option>
-        </select>
-        <button style="margin-top: 10px;" type="submit">Create Exam</button>
-    </form>
+    <div style="display:flex; gap:30px; align-items:flex-start">
+        <form id="createExamForm">
+            <input type="text" id="examName" placeholder="Exam Name" required>
+            <input type="number" id="examDuration" placeholder="Duration Minutes" required>
+            <input type="number" id="numQuestions" placeholder="Number of Questions" min="15" required>
+            <select id="examGrade" required>
+                <option value="">Select Grade</option>
+                <option value="1">Grade 1</option>
+                <option value="2">Grade 2</option>
+                <option value="3">Grade 3</option>
+            </select>
+            <button style="margin-top: 10px;" type="submit">Create Exam</button>
+        </form>
+        <div class="instructions" style="width:600px;">
+            <h4>Exam Instructions</h4>
+            <ul>
+                <li>Total exam grade must be <strong>100</strong></li>
+                <li>Minimum number of questions: <strong>15</strong></li>
+                <li>Questions must include: <strong>Easy / Middle / Hard</strong></li>
+                <li>Exam without questions is <strong style="color:red">invalid</strong></li>
+            </ul>
+        </div>
+    </div>
     <h3>All Exams</h3>
     <ul id="examsList"></ul>
     <h3>Student Exam Results</h3>
-    <div id="resultsDiv" style=" padding:10px"></div>
-    <h3>Review Student Answers</h3>
-    <label for="studentSelectForReview">Select Student:</label>
-    <select id="studentSelectForReview">
-        <option value="" selected>Select a student...</option>
+    <label for="resultsGradeFilter">Filter by Grade:</label>
+    <select id="resultsGradeFilter">
+        <option value="">All Grades</option>
+        <option value="1">Grade 1</option>
+        <option value="2">Grade 2</option>
+        <option value="3">Grade 3</option>
     </select>
+    <label for="resultsExamFilter">Filter by Exam:</label>
+    <select id="resultsExamFilter">
+        <option value="">All Exams</option>
+    </select>
+    <div id="resultsDiv" style="padding:10px; display:flex; flex-direction:column; align-items:center;"></div>
+    <h3>Review Student Answers</h3>
+    <label for="reviewGradeFilter">Filter by Grade:</label>
+    <select id="reviewGradeFilter">
+        <option value="">All Grades</option>
+        <option value="1">Grade 1</option>
+        <option value="2">Grade 2</option>
+        <option value="3">Grade 3</option>
+    </select>
+    <div id="reviewStudentsGrid"></div>
     <div id="reviewDiv"></div>
-
     <script src="../js/core/theme.js" defer></script>
     <script src="../js/core/Classes.js" defer></script>
     <script src="../js/teacher/teacherDashboard.js" defer></script>
 </body>
-
 </html>

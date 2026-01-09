@@ -15,7 +15,19 @@ document.getElementById("grade").textContent = "Grade: " + student.grade;
 const completedList = document.getElementById("completedExams");
 student.completedExams.forEach(ex => {
     const li = document.createElement("li");
-    li.textContent = `${ex.course} : ${ex.examName} - Score: ${ex.score} - Date: ${ex.date}`;
+
+    const percentage = Math.min(100, ex.score); // تأكد من عدم تجاوز 100%
+    const passMark = 60; // أو ex.passMark لو موجود
+    let status = '';
+    if (percentage >= passMark) {
+        status = 'Passed ✅';
+        li.style.color = 'green';
+    } else {
+        status = 'Failed ❌';
+        li.style.color = 'red';
+    }
+
+    li.textContent = `${ex.course} : ${ex.examName} - Score: ${percentage}% - ${status} - Date: ${ex.date}`;
     completedList.appendChild(li);
 });
 
@@ -26,15 +38,16 @@ student.nextExams.forEach(exId => {
     const exam = exams.find(e => e.id === exId);
     if (exam) {
         const li = document.createElement("li");
-        li.textContent = ` Course: ${exam.course} - Exam: ${exam.name} - Duration: ${exam.durationMinutes} mins`;
+        li.textContent = `Course: ${exam.course} - Exam: ${exam.name} - Duration: ${exam.durationMinutes} mins`;
 
         const startBtn = document.createElement('button');
-        startBtn.style.height = "12px";
+        startBtn.style.height = "25px";
         startBtn.textContent = 'Start Exam';
         startBtn.style.marginLeft = '10px';
         const isTaken = student.hasTakenExam(exam.id);
         const isAssigned = exam.assignedStudents ? exam.assignedStudents.includes(student.id) : false;
         const ready = exam.questions.length >= exam.numberOfQuestions;
+
         if (isTaken) {
             startBtn.disabled = true;
             startBtn.textContent = 'Already Taken';

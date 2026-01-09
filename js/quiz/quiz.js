@@ -25,7 +25,6 @@ if (student.hasTakenExam(exam.id)) {
 document.getElementById("examName").textContent = `${exam.name} (${exam.numberOfQuestions} required questions)`;
 
 let questions = [];
-
 try {
     questions = exam.getRandomizedQuestions();
 } catch (err) {
@@ -37,7 +36,6 @@ try {
 let currentIndex = 0;
 let totalScore = 0;
 const totalQuestions = questions.length;
-
 const totalSeconds = Math.max(1, (exam.durationMinutes) * 60);
 const perQuestionSec = Math.floor(totalSeconds / Math.max(1, totalQuestions));
 let remaining = perQuestionSec;
@@ -50,6 +48,12 @@ const nextBtn = document.getElementById('nextBtn');
 const timerBar = document.getElementById('timerBar');
 const timerText = document.getElementById('timerText');
 const qMeta = document.getElementById('qMeta');
+
+history.pushState(null, null, location.href);
+window.onpopstate = function () {
+    finishExam();
+    history.pushState(null, null, location.href);
+};
 
 function startTimer() {
     clearInterval(timerInterval);
@@ -156,7 +160,21 @@ nextBtn.addEventListener('click', () => {
 function finishExam() {
     document.getElementById('questionContainer').style.display = 'none';
     document.getElementById('resultContainer').style.display = 'block';
-    document.getElementById('score').textContent = `Score: ${totalScore}`;
+
+    const totalPossible = questions.reduce((sum, q) => sum + (q.score || 1), 0); // مجموع درجات كل الأسئلة
+    const percentage = Math.min(100, Math.round((totalScore / totalPossible) * 100)); // تحجيم لـ 100%
+
+    const scoreElement = document.getElementById('score');
+    scoreElement.textContent = `Score: ${percentage}%`;
+
+    const passMark = exam.passMark || 60;
+    if (percentage >= passMark) {
+        scoreElement.style.color = 'green';
+        scoreElement.textContent += ' — Passed ✅';
+    } else {
+        scoreElement.style.color = 'red';
+        scoreElement.textContent += ' — Failed ❌';
+    }
 
     const questionsForReview = questions.map(q => {
         return {
@@ -171,18 +189,19 @@ function finishExam() {
 
     const date = new Date().toLocaleString();
     student.completedExams = student.completedExams || [];
-    student.completedExams.push({ examId: exam.id, examName: exam.name, score: totalScore, course: exam.course, date, questions: questionsForReview });
+    student.completedExams.push({ examId: exam.id, examName: exam.name, score: percentage, course: exam.course, date, questions: questionsForReview });
     if (student.nextExams) student.nextExams = student.nextExams.filter(id => id !== exam.id);
     StorageService.save('students', StorageService.load('students').map(s => s.id === student.id ? student : s));
     StorageService.save('currentUser', student);
 
-    exam.addResult(student.id, totalScore, date);
+    exam.addResult(student.id, percentage, date);
     StorageService.updateExam(exam);
 
     nextBtn.disabled = true;
     nextBtn.style.display = 'none';
     clearInterval(timerInterval);
 }
+
 
 try {
     if (!questions || questions.length === 0) {

@@ -289,3 +289,12 @@ body.register-page .container form select {
         flex-direction: column;
     }
 }
+
+
+button {
+    cursor: pointer;
+    width: fit-content;
+    height: fit-content;
+    margin: 10px;
+
+}
