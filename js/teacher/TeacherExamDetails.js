@@ -131,19 +131,42 @@ function renderStudents() {
 }
 
 renderStudents();
-
 document.getElementById("assignSingleBtn").addEventListener("click", () => {
     const selected = Array.from(studentContainer.querySelectorAll("input[type=checkbox]:checked"));
     if (!selected.length) return alert("Select at least one student");
+
     const selectedStudents = selected.map(s => students.find(st => st.id == s.value));
+
+    selectedStudents.forEach(st => {
+        if (!st.nextExams.includes(exam.id)) {
+            st.nextExams.push(exam.id);
+        }
+        if (!exam.assignedStudents.includes(st.id)) {
+            exam.assignedStudents.push(st.id);
+        }
+        StorageService.updateStudent(st);
+    });
+
+    StorageService.updateExam(exam);
+
     const names = selectedStudents.map(s => s.username).join(", ");
     alert(`Assigned to: ${names}`);
 });
 
 document.getElementById("assignBtn").addEventListener("click", () => {
+    students.forEach(st => {
+        if (!st.nextExams.includes(exam.id)) {
+            st.nextExams.push(exam.id);
+        }
+        if (!exam.assignedStudents.includes(st.id)) {
+            exam.assignedStudents.push(st.id);
+        }
+        StorageService.updateStudent(st);
+    });
+
+    StorageService.updateExam(exam);
+
     alert("Assigned to all students");
 });
 
-document.getElementById("backBtn").addEventListener("click", () => {
-    window.location.href = "../pages/teacherDashboard.html";
-});
+
