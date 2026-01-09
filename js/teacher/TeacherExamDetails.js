@@ -205,3 +205,7 @@ document.getElementById("assignBtn").addEventListener("click", () => {
     StorageService.updateExam(exam);
     alert("Assigned to all students");
 });
+document.getElementById("backBtn").addEventListener("click", () => {
+    window.location.href = "../pages/teacherDashboard.html";
+});
+
